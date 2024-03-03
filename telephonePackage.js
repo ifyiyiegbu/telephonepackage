@@ -1,98 +1,91 @@
 // Observer class
-class PhoneBookObserver {
+class contactListObserver {
     constructor() {
       this.updates = [];
     }
   
-    // Method called by the Telephone class to notify updates
     Update(name, number, action) {
       this.updates.push({ name, number, action });
-      console.log(`Phone book update: ${name} ${action} (${number})`);
+      console.log(`Contact list updated ${name} ${action} (${number})`);
     }
   }
   
-  class PhoneNumberObserver {
+  class printPhoneNumberObserver {
     Update(number) {
       console.log(`${number}`);
     }
   }
   
-  class DialingObserver {
+  class dialingPhoneNumberObserver {
     Update(number) {
-      console.log(`Now Dialing: ${number}`);
+      console.log(`Now Dialing ${number}`);
     }
   }
   
-  // Telephone class with observer pattern
   class Telephone {
     constructor() {
-      this.phoneBook = new Map();
+      this.contactList = new Map();
       this.observers = [];
     }
   
-    // Method to add a phone number to the phone book
     AddPhoneNumber(name, number) {
-      if (this.phoneBook.has(name)) {
-        console.log(`${name} is already in the phone book.`);
+      if (this.contactList.has(name)) {
+        console.log(`${name} already exists in the contact list.`);
       } else {
-        this.phoneBook.set(name, number);
-        console.log(`${name} added to the phone book.`);
-        this.NotifyObservers(name, number, 'added');
+        this.contactList.set(name, number);
+        console.log(`${name} has been added to the contact list.`);
+        this.notifyObservers(name, number, 'added');
       }
     }
   
-    // Method to remove a phone number from the phone book
     RemovePhoneNumber(name) {
-      if (this.phoneBook.has(name)) {
-        const number = this.phoneBook.get(name);
-        this.phoneBook.delete(name);
-        console.log(`${name}'s phone number removed from the phone book.`);
-        this.NotifyObservers(name, number, 'removed');
+      if (this.contactList.has(name)) {
+        const number = this.contactList.get(name);
+        this.contactList.delete(name);
+        console.log(`${name}'s phone number removed from the contact list.`);
+        this.notifyObservers(name, number, 'deleted');
       } else {
-        console.log(`${name} is not in the phone book.`);
+        console.log(`${name} does not exist in the contact list.`);
       }
     }
   
-    // Method to dial a phone number
     DialPhoneNumber(name) {
-      if (this.phoneBook.has(name)) {
-        const number = this.phoneBook.get(name);
-        this.NotifyObservers(number);
-        console.log(`Dialing ${number} for ${name}.`);
+      if (this.contactList.has(name)) {
+        const number = this.contactList.get(name);
+        this.notifyObservers(number);
       } else {
-        console.log(`${name} is not in the phone book.`);
+        console.log(`${name} does not exist in the contact list.`);
       }
     }
   
-    // Method to add an observer
-    AddObserver(observer) {
+    addObserver(observer) {
       this.observers.push(observer);
     }
   
-    // Method to remove an observer
-    RemoveObserver(observer) {
+    deleteObserver(observer) {
       this.observers = this.observers.filter(obs => obs !== observer);
     }
   
-    // Method to notify observers
-    NotifyObservers(...args) {
+    notifyObservers(...args) {
       this.observers.forEach(observer => observer.Update(...args));
     }
   }
   
-  // Example usage:
+  // implementation
+
   const phone = new Telephone();
-  const observer1 = new PhoneNumberObserver();
-  const observer2 = new DialingObserver();
+  const observer1 = new printPhoneNumberObserver();
+  const observer2 = new dialingPhoneNumberObserver();
   
-  phone.AddObserver(observer1);
-  phone.AddObserver(observer2);
+  phone.addObserver(observer1);
+  phone.addObserver(observer2);
   
-  phone.AddPhoneNumber("John", "123-456-7890");
-  phone.DialPhoneNumber("John");
-  phone.RemoveObserver(observer1);
-  phone.RemoveObserver(observer2);
-  
-  phone.AddPhoneNumber("Alice", "987-654-3210");
-  phone.DialPhoneNumber("Alice");
+  phone.AddPhoneNumber("Vivian", "2349045638211");
+  phone.AddPhoneNumber("Alfred", "2348136549312");
+  phone.AddPhoneNumber("Chika", "2347065770102");
+  console.log(phone.contactList);
+  phone.DialPhoneNumber("Adam");
+  phone.DialPhoneNumber("Chika");
+  phone.deleteObserver(observer1);
+  phone.deleteObserver(observer2);
   
